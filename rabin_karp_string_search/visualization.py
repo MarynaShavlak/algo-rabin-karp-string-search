@@ -709,30 +709,35 @@ def draw_search_evolution(
 # Контраст / підсумок
 # ===========================================================================
 def draw_rolling_vs_recompute(
-    pattern: str = "abcd",
     *,
-    n_max: int = 60,
+    m_ratio: float = 0.5,
+    n_max: int = 80,
     figsize: Tuple[float, float] = (7.8, 5.0),
 ):
     """Графік: rolling :math:`O(1)` проти перерахунку хешу з нуля :math:`O(m)`.
 
-    Для тексту довжини ``n`` (із шаблоном завдовжки ``m = len(pattern)``) рахуємо
-    «символьні операції хешування»: rolling росте **лінійно** за ``n``, а
-    перерахунок із нуля — як ``n·m``. Це і є пейофф ковзного хешу.
+    Рахуємо «символьні операції хешування» для тексту довжини ``n``, де **шаблон
+    зростає разом із текстом** (``m ≈ m_ratio·n``) — саме так розкривається
+    асимптотика. Перерахунок вікна з нуля коштує :math:`O(m)` на крок, тож сумарно
+    :math:`O(n\\cdot m)` — при ``m ∝ n`` це **над-лінійна** (квадратична) крива.
+    Rolling оновлює хеш за :math:`O(1)` на крок → :math:`O(n)`, лінійна. Розрив
+    зростає необмежено — ось пейофф ковзного хешу (узгоджено з :func:`draw_complexity`).
 
     :returns: об'єкт ``Figure``.
     """
-    m = len(pattern)
-    ns = np.arange(m, n_max + 1)
-    rolling = [count_hash_char_ops("a" * int(n), pattern, rolling=True) for n in ns]
-    recompute = [count_hash_char_ops("a" * int(n), pattern, rolling=False) for n in ns]
+    ns = np.arange(4, n_max + 1)
+    ms = [max(2, int(round(m_ratio * int(n)))) for n in ns]
+    rolling = [count_hash_char_ops("a" * int(n), "a" * m, rolling=True)
+               for n, m in zip(ns, ms)]
+    recompute = [count_hash_char_ops("a" * int(n), "a" * m, rolling=False)
+                 for n, m in zip(ns, ms)]
 
     fig, ax = plt.subplots(figsize=figsize)
     ax.plot(ns, recompute, color=CURVE_RK_WORST, lw=2.6,
             label=t("перерахунок із нуля ≈ n·m"))
     ax.plot(ns, rolling, color=CURVE_RK_AVG, lw=3.0, label=t("rolling ≈ n (лінійно)"))
     ax.set_title(t("Rolling O(1) проти перерахунку з нуля O(m)"), fontsize=12.5)
-    ax.set_xlabel(t("довжина тексту n"), fontsize=11, color=HEADER_TXT)
+    ax.set_xlabel(t("довжина тексту n (шаблон m ≈ n/2)"), fontsize=11, color=HEADER_TXT)
     ax.set_ylabel(t("символьних операцій хешування"), fontsize=11, color=HEADER_TXT)
     ax.legend(loc="upper left", fontsize=10, frameon=True, framealpha=0.92)
     ax.grid(True, linestyle=":", alpha=0.45)

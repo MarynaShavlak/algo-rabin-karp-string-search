@@ -286,7 +286,7 @@ Rolling hash: O(1) update vs recompute-from-scratch O(m)
 
 ![Graph: rolling O(1) vs recompute-from-scratch O(m)](docs/images/en/rolling_vs_recompute.png)
 
-Rolling grows **linearly** in `n`; recomputing from scratch grows like `n·m`.
+The text block above is a concrete short pattern `"abcd"` (rolling is ~2× cheaper). In the graph the pattern **grows with the text** (`m ≈ n/2`), so recomputing from scratch becomes a **quadratic** curve (red) `≈ n·m` that pulls away from the **linear** rolling one (green) `≈ n` without bound.
 
 ---
 

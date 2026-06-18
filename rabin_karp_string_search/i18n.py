@@ -150,6 +150,7 @@ _EN: Dict[str, str] = {
     "перерахунок із нуля ≈ n·m": "recompute from scratch ≈ n·m",
     "rolling ≈ n (лінійно)": "rolling ≈ n (linear)",
     "довжина тексту n": "text length n",
+    "довжина тексту n (шаблон m ≈ n/2)": "text length n (pattern m ≈ n/2)",
     "символьних операцій хешування": "hashing character operations",
 
     # --- visualization: складність ---------------------------------------------

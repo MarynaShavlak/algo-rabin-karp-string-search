@@ -108,7 +108,7 @@ def test_collision_and_summary_figures_render():
     _close(draw_collision("heap", "user"))
     _close(draw_compare_four(RAW, KONSPECT_PATTERN))
     _close(draw_complexity())
-    _close(draw_rolling_vs_recompute("abcd"))
+    _close(draw_rolling_vs_recompute())
     _, cev = rabin_karp_search_steps(SEARCH_COLLISION.text, SEARCH_COLLISION.pattern)
     _close(draw_search_evolution(cev))
 
@@ -202,7 +202,7 @@ def test_en_translation_audit():
         draw_collision("for", "jar"); plt.close("all")
         draw_compare_four(RAW, KONSPECT_PATTERN); plt.close("all")
         draw_complexity(); plt.close("all")
-        draw_rolling_vs_recompute("abcd"); plt.close("all")
+        draw_rolling_vs_recompute(); plt.close("all")
         # панелі коду
         for s in build_hash_steps("abc") + build_search_steps("for jar", "jar"):
             render_code_step(s); plt.close("all")

@@ -69,7 +69,7 @@ def main() -> None:
         print(t("  n={n:>2}: rolling {roll} символьних операцій, перерахунок {rec}").format(
             n=n, roll=roll, rec=recompute))
     print()
-    save_figure(draw_rolling_vs_recompute("abcd"), "rolling_vs_recompute.png")
+    save_figure(draw_rolling_vs_recompute(), "rolling_vs_recompute.png")
 
     # один кадр rolling-оновлення (з конспект-пошуку)
     _, kev = rabin_karp_search_steps("Being a developer is not easy", "developer")
