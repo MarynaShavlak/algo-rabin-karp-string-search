@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rabin-karp-string-search-visualized"
+dynamic = ["version"]
+description = "Навчальна реалізація та покрокова візуалізація алгоритму Рабіна-Карпа (Rabin-Karp, хешування)"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [{ name = "Maryna Shavlak", email = "shavlakmaryna@gmail.com" }]
+keywords = ["rabin-karp", "rolling-hash", "polynomial-hash", "string-matching", "pattern-matching", "hashing", "algorithms", "education", "visualization"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Education",
+    "Intended Audience :: Education",
+]
+dependencies = [
+    "matplotlib>=3.5",
+    "numpy>=1.21",
+    "pillow>=9.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+# Рендер анімацій у .mp4 без системного ffmpeg (через бінарник із imageio-ffmpeg).
+# Базова установка лишається легкою: без цього extra збираються лише GIF.
+video = [
+    "imageio-ffmpeg>=0.4",
+]
+
+[tool.setuptools]
+packages = ["rabin_karp_string_search"]
+
+# Версію не дублюємо: єдине джерело — rabin_karp_string_search.__version__ (у __init__.py).
+[tool.setuptools.dynamic]
+version = { attr = "rabin_karp_string_search.__version__" }

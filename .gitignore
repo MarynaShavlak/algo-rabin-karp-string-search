@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# pytest
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# matplotlib / OS
+*.tmp
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Вихідний матеріал (конспект) — не входить до репозиторію
+*.pdf
+
+# Node-скаффолдинг (проєкт — на Python)
+node_modules/

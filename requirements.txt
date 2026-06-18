@@ -1,0 +1,7 @@
+matplotlib>=3.5
+numpy>=1.21
+pillow>=9.1
+
+# Опційно: рендер анімацій у .mp4 без системного ffmpeg.
+# Розкоментуйте (або: pip install -e ".[video]"). Без нього збираються лише GIF.
+# imageio-ffmpeg>=0.4
