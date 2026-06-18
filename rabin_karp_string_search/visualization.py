@@ -234,11 +234,31 @@ def draw_polynomial_hash(
     :returns: об'єкт ``Figure``.
     """
     n = len(s)
-    raw = polynomial_hash_raw(s, base)
     h = polynomial_hash(s, base, modulus)
 
+    # Внески: «сирі» ``ord·bᵏ`` дають іконічне «abc → 6382179 → 90», але на довгих
+    # рядках вони стають астрономічними (для «developer» перший внесок — 22 цифри) і
+    # не вміщаються в комірку. Тоді переходимо на МОДУЛЬНИЙ вигляд (степінь ``bᵏ mod m``
+    # та внесок ``ord·(bᵏ mod m)``) — рівно ті числа, що їх рахує ``polynomial_hash``;
+    # їхня сума за модулем дає той самий хеш.
+    raw_contribs = [ord(s[k]) * base ** (n - k - 1) for k in range(n)]
+    mod_powers = [pow(base, n - k - 1) % modulus for k in range(n)]
+    mod_contribs = [ord(s[k]) * mod_powers[k] for k in range(n)]
+    use_raw = (not raw_contribs) or max(raw_contribs) < 10 ** 7
+
+    if use_raw:
+        pow_cells = [f"{base}{_sup(n - k - 1)}" for k in range(n)]
+        term_cells = [str(c) for c in raw_contribs]
+        total = sum(raw_contribs)
+        pow_label = f"{base}ᵏ"
+    else:
+        pow_cells = [str(p) for p in mod_powers]
+        term_cells = [str(c) for c in mod_contribs]
+        total = sum(mod_contribs)
+        pow_label = f"{base}ᵏ mod {modulus}"
+
     if figsize is None:
-        figsize = (max(7.0, n * 1.18 + 1.8), 4.6)
+        figsize = (max(7.0, n * 1.18 + 2.2), 4.6)
     fig, ax = plt.subplots(figsize=figsize)
 
     # рядки сітки (зверху вниз): символ / код / степінь / внесок
@@ -251,29 +271,28 @@ def draw_polynomial_hash(
         _char_cell(ax, x, y_sym, s[k], "window", fs=16)
         ax.text(x, y_ord, str(ord(s[k])), ha="center", va="center", fontsize=11.5,
                 color=TEXT_FORMULA, fontweight="bold", family="monospace")
-        ax.text(x, y_pow, f"{base}{_sup(n - k - 1)}", ha="center", va="center",
+        ax.text(x, y_pow, pow_cells[k], ha="center", va="center",
                 fontsize=11.5, color=TERM_TXT, fontweight="bold", family="monospace")
-        ax.text(x, y_term, f"{ord(s[k]) * base ** (n - k - 1)}", ha="center",
-                va="center", fontsize=10.5, color=TEXT_DARK, family="monospace")
+        ax.text(x, y_term, term_cells[k], ha="center", va="center",
+                fontsize=10.5, color=TEXT_DARK, family="monospace")
         if k < n - 1:
             ax.text(x + step / 2, y_term, "+", ha="center", va="center",
                     fontsize=12, color=MUTED_TXT, fontweight="bold")
 
     labels = [(y_sym, t("Символ"), HEADER_TXT), (y_ord, t("код ord"), TEXT_FORMULA),
-              (y_pow, t("степінь bⁿ⁻ⁱ⁻¹ mod m") if False else f"{base}ᵏ", TERM_TXT),
-              (y_term, t("внесок"), TEXT_DARK)]
+              (y_pow, pow_label, TERM_TXT), (y_term, t("внесок"), TEXT_DARK)]
     for yy, lab, col in labels:
-        ax.text(-1.15, yy, lab, ha="right", va="center", fontsize=10,
+        ax.text(-1.25, yy, lab, ha="right", va="center", fontsize=10,
                 color=col, fontweight="bold")
 
     cx = (n - 1) * step / 2.0
     ax.text(cx, -1.0,
-            t("h(«{s}») = {raw} = {h} (mod {m})").format(s=s, raw=raw, h=h, m=modulus),
+            t("h(«{s}») = {raw} = {h} (mod {m})").format(s=s, raw=total, h=h, m=modulus),
             ha="center", va="top", fontsize=12.5, color=TEXT_FORMULA, fontweight="bold")
     ax.text(cx, -1.55, t("база b = {b}, модуль m = {m}").format(b=base, m=modulus),
             ha="center", va="top", fontsize=9.5, color=SUBLABEL_TXT)
 
-    ax.set_xlim(-2.4, (n - 1) * step + 1.0)
+    ax.set_xlim(-2.8, (n - 1) * step + 1.0)
     ax.set_ylim(-2.1, y_sym + _CH / 2 + 0.7)
     _strip_axes(ax)
     if title is None:
