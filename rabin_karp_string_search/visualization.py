@@ -776,7 +776,9 @@ def draw_compare_four(
     naive = count_naive_comparisons(text, pattern)
     kmp = count_kmp_comparisons(text, pattern)
     bm = count_boyer_moore_comparisons(text, pattern)
-    rk = rabin_karp_metrics(text, pattern)["char_comparisons"]
+    metrics = rabin_karp_metrics(text, pattern)
+    rk = metrics["char_comparisons"]
+    rk_hash = metrics["hash_comparisons"]
 
     names = [t("наївний"), "KMP", t("Боєра-Мура"), t("Рабіна-Карпа (char-перевірки)")]
     values = [naive, kmp, bm, rk]
@@ -787,6 +789,13 @@ def draw_compare_four(
     for b, v in zip(bars, values):
         ax.text(b.get_x() + b.get_width() / 2, v, str(v), ha="center", va="bottom",
                 fontsize=11, color=TEXT_DARK, fontweight="bold")
+    # Рабін-Карп основну роботу робить ДЕШЕВИМИ порівняннями хешів — позначаємо їх
+    # окремо над зеленим стовпцем (char-перевірки — лише на збігу хешів).
+    rk_bar = bars[3]
+    ax.annotate(t("+{h} hash").format(h=rk_hash),
+                xy=(rk_bar.get_x() + rk_bar.get_width() / 2, rk),
+                xytext=(0, 18), textcoords="offset points",
+                ha="center", va="bottom", fontsize=10, color=CURVE_RK, fontweight="bold")
     ax.set_xticks(range(4))
     ax.set_xticklabels(names, fontsize=10)
     ax.set_ylabel(t("посимвольних порівнянь"), fontsize=11, color=HEADER_TXT)
