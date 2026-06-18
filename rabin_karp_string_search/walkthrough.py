@@ -226,7 +226,7 @@ def pick_illustrative(steps: List[Dict]) -> List[Dict]:
 # Блок 2 — кодова панель (ліворуч)
 # ---------------------------------------------------------------------------
 def draw_code_panel(ax, highlights: Dict[int, str], code: Sequence[str],
-                    *, fontsize: float = 10.0) -> None:
+                    *, fontsize: float = 9.0) -> None:
     """Малює ``code`` на осі ``ax`` і підсвічує рядки за мапою ``highlights``.
 
     :param highlights: ``{індекс_рядка: колір_заливки}`` зі знімка журналу.
