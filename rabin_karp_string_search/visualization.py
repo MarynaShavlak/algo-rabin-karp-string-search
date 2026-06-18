@@ -185,11 +185,14 @@ def _char_cell(ax, x: float, y: float, ch: object, state: str, *,
 
 
 def _hash_badge(ax, x: float, y: float, value, *, kind: str = "window",
-                label: Optional[str] = None, fs: float = 13.0) -> None:
+                label: Optional[str] = None, fs: float = 13.0,
+                label_below: bool = False) -> None:
     """Малює ХЕШ як бейдж-число (``window`` — хеш вікна, ``pattern`` — хеш шаблону).
 
     Хеш — головний об'єкт порівняння в Рабіні-Карпі, тож йому віддано окремий
-    помітний «бейдж-лічильник» замість комірки-символу.
+    помітний «бейдж-лічильник» замість комірки-символу. ``label_below`` ставить
+    підпис ПІД бейджем (для нижнього бейджа пари, щоб не накласти на знак «=»/«≠»
+    між двома бейджами).
     """
     if kind == "pattern":
         fill, edge, txt = PATTERN_HASH_FILL, PATTERN_HASH_EDGE, PATTERN_HASH_TXT
@@ -202,7 +205,8 @@ def _hash_badge(ax, x: float, y: float, value, *, kind: str = "window",
     ax.text(x, y, str(value), ha="center", va="center", fontsize=fs,
             color=txt, fontweight="bold", family="monospace", zorder=5)
     if label:
-        ax.text(x, y + 0.5, label, ha="center", va="bottom", fontsize=8.5,
+        ly, va = ((y - 0.5, "top") if label_below else (y + 0.5, "bottom"))
+        ax.text(x, ly, label, ha="center", va=va, fontsize=8.5,
                 color=edge, fontweight="bold")
 
 
@@ -448,7 +452,8 @@ def _draw_window_strip(
         _hash_badge(ax, badge_x, y_text + 0.55, wh, kind="window",
                     label=t("хеш вікна") if show_badge_label else None)
         _hash_badge(ax, badge_x, y_text - 0.55, ph, kind="pattern",
-                    label=t("хеш шаблону") if show_badge_label else None)
+                    label=t("хеш шаблону") if show_badge_label else None,
+                    label_below=True)
         # знак порівняння між бейджами (= рівні / ≠ різні; колір — за вердиктом)
         if kind in ("hash_match", "match_found", "collision") or kind == "verify":
             sign = "="
